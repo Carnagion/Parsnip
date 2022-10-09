@@ -4,6 +4,8 @@ module Data.Parsnip (
     ParseFailure (..),
 ) where
 
+import Control.Applicative (Alternative (empty, (<|>)))
+
 data ParseSuccess i o = Success {output :: o, remaining :: i, offset :: Int}
     deriving (Show)
 
@@ -42,3 +44,14 @@ instance Applicative (Parser i e) where
                 xl <- pl i
                 xr <- pr (remaining xl)
                 return (Success (output xl (output xr)) (remaining xr) (offset xl + offset xr))
+
+instance Alternative (Parser i e) where
+    empty = Parser (\i -> failure [] i 0)
+
+    Parser pl <|> Parser pr = Parser p'
+        where
+            p' i = case pl i of
+                Right r -> Right r
+                Left l -> case pr i of
+                    Right r' -> Right r'
+                    Left l' -> failure (errors l ++ errors l') i 0
