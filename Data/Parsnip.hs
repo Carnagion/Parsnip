@@ -15,6 +15,7 @@ module Data.Parsnip (
     times,
     many,
     fallback,
+    delimited,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -142,3 +143,13 @@ many p = do
 
 fallback :: o -> Parser i e o -> Parser i e o
 fallback o p = p <|> return o
+
+delimited :: Parser i e o' -> Parser i e o -> Parser i e [o]
+delimited pd p = do
+    x <- p
+    d <- optional pd
+    case d of
+        Nothing -> return [x]
+        Just _ -> do
+            xs <- delimited pd p
+            return (x : xs)
