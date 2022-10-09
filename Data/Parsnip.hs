@@ -8,6 +8,7 @@ module Data.Parsnip (
     satisfy,
     single,
     Data.Parsnip.sequence,
+    from,
     rethrow,
     alternatives,
 ) where
@@ -103,6 +104,9 @@ sequence xs = f xs []
         f (hd : tl) o = do
             x <- single hd
             f tl (hd : o)
+
+from :: Eq i => [i] -> Parser [i] (ParseError i) i
+from = alternatives . map single
 
 rethrow :: (e -> e') -> Parser i e o -> Parser i e' o
 rethrow f (Parser p) = Parser (t . p)
