@@ -1,3 +1,12 @@
+{-
+Module: Data.Parsnip
+Description: A simple monadic parser combinator library.
+Copyright: (c) Indraneel Mahendrakumar, 2022
+License: MIT
+Maintainer: Indraneel Mahendrakumar (indraneel.mahendrakumar@gmail.com)
+Stability: experimental
+Portability: portable
+-}
 module Data.Parsnip (
     Parser (..),
     ParseSuccess (..),
