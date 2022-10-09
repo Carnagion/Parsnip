@@ -22,6 +22,17 @@ instance Functor (Parser i e) where
             p' (Left l) = Left l
             p' (Right r) = success (f (output r)) (remaining r) (offset r)
 
+instance Monad (Parser i e) where
+    return = pure
+
+    Parser p >>= f = Parser p'
+        where
+            p' i = do
+                x <- p i
+                case parse (f (output x)) (remaining x) of
+                    Left l -> failure (errors l) (input l) (offset x + position l)
+                    Right r -> success (output r) (remaining r) (offset x + offset r)
+
 instance Applicative (Parser i e) where
     pure o = Parser (\i -> success o i 0)
 
