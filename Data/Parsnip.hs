@@ -21,3 +21,13 @@ instance Functor (Parser i e) where
         where
             p' (Left l) = Left l
             p' (Right r) = success (f (output r)) (remaining r) (offset r)
+
+instance Applicative (Parser i e) where
+    pure o = Parser (\i -> success o i 0)
+
+    Parser pl <*> Parser pr = Parser p'
+        where
+            p' i = do
+                xl <- pl i
+                xr <- pr (remaining xl)
+                return (Success (output xl (output xr)) (remaining xr) (offset xl + offset xr))
