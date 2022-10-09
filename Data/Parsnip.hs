@@ -5,6 +5,7 @@ module Data.Parsnip (
     ParseError (..),
     some,
     none,
+    satisfy,
     rethrow,
 ) where
 
@@ -78,6 +79,14 @@ none = Parser p
     where
         p [] = success () [] 0
         p (hd : tl) = failure [Unexpected hd] (hd : tl) 0
+
+satisfy :: (i -> Bool) -> Parser [i] (ParseError i) i
+satisfy f = Parser p
+    where
+        p [] = failure [Unsatisfied Nothing] [] 0
+        p (hd : tl)
+            | f hd = success hd tl 1
+            | otherwise = failure [Unsatisfied (Just hd)] (hd : tl) 0
 
 rethrow :: (e -> e') -> Parser i e o -> Parser i e' o
 rethrow f (Parser p) = Parser (t . p)
