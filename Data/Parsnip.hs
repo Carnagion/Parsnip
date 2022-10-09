@@ -15,3 +15,9 @@ data ParseFailure i e = Failure {errors :: [e], input :: i, position :: Int}
 failure e i n = Left (Failure e i n)
 
 newtype Parser i e o = Parser {parse :: i -> Either (ParseFailure i e) (ParseSuccess i o)}
+
+instance Functor (Parser i e) where
+    fmap f (Parser p) = Parser (p' . p)
+        where
+            p' (Left l) = Left l
+            p' (Right r) = success (f (output r)) (remaining r) (offset r)
