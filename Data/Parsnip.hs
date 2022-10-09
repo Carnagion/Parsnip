@@ -14,6 +14,7 @@ module Data.Parsnip (
     optional,
     times,
     many,
+    fallback,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -138,3 +139,6 @@ many p = do
     x <- p
     xs <- many p <|> return []
     return (x : xs)
+
+fallback :: o -> Parser i e o -> Parser i e o
+fallback o p = p <|> return o
