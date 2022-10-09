@@ -12,6 +12,7 @@ module Data.Parsnip (
     rethrow,
     alternatives,
     optional,
+    times,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -123,3 +124,10 @@ optional (Parser p) = Parser (p' . p)
     where
         p' (Left l) = success Nothing (input l) 0
         p' (Right r) = success (Just (output r)) (remaining r) (offset r)
+
+times :: Int -> Parser i e o -> Parser i e [o]
+times 0 p = return []
+times n p = do
+    x <- p
+    xs <- times (n - 1) p
+    return (x : xs)
