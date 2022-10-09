@@ -7,7 +7,7 @@ module Data.Parsnip (
     none,
     satisfy,
     single,
-    Data.Parsnip.sequence,
+    sequence,
     from,
     rethrow,
     alternatives,
@@ -17,6 +17,8 @@ module Data.Parsnip (
     fallback,
     delimited,
 ) where
+
+import Prelude hiding (sequence)
 
 import Control.Applicative (Alternative (empty, (<|>)))
 
