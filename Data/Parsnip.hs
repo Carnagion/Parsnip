@@ -1,4 +1,8 @@
-module Data.Parsnip where
+module Data.Parsnip (
+    Parser (..),
+    ParseSuccess (..),
+    ParseFailure (..),
+) where
 
 data ParseSuccess i o = Success {output :: o, remaining :: i, offset :: Int}
     deriving (Show)
