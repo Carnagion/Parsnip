@@ -6,6 +6,8 @@ module Data.Parsnip (
     some,
     none,
     satisfy,
+    single,
+    Data.Parsnip.sequence,
     rethrow,
 ) where
 
@@ -87,6 +89,17 @@ satisfy f = Parser p
         p (hd : tl)
             | f hd = success hd tl 1
             | otherwise = failure [Unsatisfied (Just hd)] (hd : tl) 0
+
+single :: Eq i => i -> Parser [i] (ParseError i) i
+single x = rethrow (\(Unsatisfied y) -> Unequal x y) (satisfy (== x))
+
+sequence :: Eq i => [i] -> Parser [i] (ParseError i) [i]
+sequence xs = f xs []
+    where
+        f [] o = return (reverse o)
+        f (hd : tl) o = do
+            x <- single hd
+            f tl (hd : o)
 
 rethrow :: (e -> e') -> Parser i e o -> Parser i e' o
 rethrow f (Parser p) = Parser (t . p)
