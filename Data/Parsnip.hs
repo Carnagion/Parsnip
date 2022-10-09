@@ -9,9 +9,12 @@ module Data.Parsnip (
     single,
     Data.Parsnip.sequence,
     rethrow,
+    alternatives,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
+
+import Data.Foldable (asum)
 
 data ParseSuccess i o = Success {output :: o, remaining :: i, offset :: Int}
     deriving (Show)
@@ -106,3 +109,6 @@ rethrow f (Parser p) = Parser (t . p)
     where
         t (Left l) = failure (map f (errors l)) (input l) (position l)
         t (Right r) = Right r
+
+alternatives :: [Parser i e o] -> Parser i e o
+alternatives = asum
