@@ -74,7 +74,7 @@ instance Monad (Parser i e) where
                     Right r -> success (output r) (remaining r) (offset x + offset r)
 
 instance Applicative (Parser i e) where
-    pure o = Parser (\i -> success o i 0)
+    pure o = Parser (\ i -> success o i 0)
 
     Parser pl <*> Parser pr = Parser p'
         where
@@ -84,7 +84,7 @@ instance Applicative (Parser i e) where
                 return (Success (output xl (output xr)) (remaining xr) (offset xl + offset xr))
 
 instance Alternative (Parser i e) where
-    empty = Parser (\i -> failure [] i 0)
+    empty = Parser (\ i -> failure [] i 0)
 
     Parser pl <|> Parser pr = Parser p'
         where
@@ -131,7 +131,7 @@ satisfy f = Parser p
 
 -- | @`single` x@ succeeds on the next input (from a list) if it equals @x@, failing with a `ParseError` otherwise.
 single :: Eq i => i -> Parser [i] (ParseError i) i
-single x = rethrow (\(Unsatisfied y) -> Unequal x y) (satisfy (== x))
+single x = rethrow (\ (Unsatisfied y) -> Unequal x y) (satisfy (== x))
 
 -- | @`sequence` xs@ succeeds on the next multiple elements from a list if they equal the elements of @xs@ in the same order.
 sequence :: Eq i => [i] -> Parser [i] (ParseError i) [i]
