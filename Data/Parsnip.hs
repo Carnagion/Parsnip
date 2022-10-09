@@ -3,6 +3,8 @@ module Data.Parsnip (
     ParseSuccess (..),
     ParseFailure (..),
     ParseError (..),
+    some,
+    none,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -63,3 +65,15 @@ data ParseError i
     | Unsatisfied (Maybe i)
     | Unequal i (Maybe i)
     deriving (Show)
+
+some :: Parser [i] (ParseError i) i
+some = Parser p
+    where
+        p [] = failure [Expected] [] 0
+        p (hd : tl) = success hd tl 1
+
+none :: Parser [i] (ParseError i) ()
+none = Parser p
+    where
+        p [] = success () [] 0
+        p (hd : tl) = failure [Unexpected hd] (hd : tl) 0
