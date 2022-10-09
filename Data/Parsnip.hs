@@ -5,6 +5,7 @@ module Data.Parsnip (
     ParseError (..),
     some,
     none,
+    rethrow,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -77,3 +78,9 @@ none = Parser p
     where
         p [] = success () [] 0
         p (hd : tl) = failure [Unexpected hd] (hd : tl) 0
+
+rethrow :: (e -> e') -> Parser i e o -> Parser i e' o
+rethrow f (Parser p) = Parser (t . p)
+    where
+        t (Left l) = failure (map f (errors l)) (input l) (position l)
+        t (Right r) = Right r
