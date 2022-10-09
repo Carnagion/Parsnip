@@ -13,6 +13,7 @@ module Data.Parsnip (
     alternatives,
     optional,
     times,
+    many,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -130,4 +131,10 @@ times 0 p = return []
 times n p = do
     x <- p
     xs <- times (n - 1) p
+    return (x : xs)
+
+many :: Parser i e o -> Parser i e [o]
+many p = do
+    x <- p
+    xs <- many p <|> return []
     return (x : xs)
