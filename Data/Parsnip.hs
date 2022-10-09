@@ -11,6 +11,7 @@ module Data.Parsnip (
     from,
     rethrow,
     alternatives,
+    optional,
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -116,3 +117,9 @@ rethrow f (Parser p) = Parser (t . p)
 
 alternatives :: [Parser i e o] -> Parser i e o
 alternatives = asum
+
+optional :: Parser i e o -> Parser i e (Maybe o)
+optional (Parser p) = Parser (p' . p)
+    where
+        p' (Left l) = success Nothing (input l) 0
+        p' (Right r) = success (Just (output r)) (remaining r) (offset r)
