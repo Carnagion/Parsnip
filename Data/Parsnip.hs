@@ -2,6 +2,7 @@ module Data.Parsnip (
     Parser (..),
     ParseSuccess (..),
     ParseFailure (..),
+    ParseError (..),
 ) where
 
 import Control.Applicative (Alternative (empty, (<|>)))
@@ -55,3 +56,10 @@ instance Alternative (Parser i e) where
                 Left l -> case pr i of
                     Right r' -> Right r'
                     Left l' -> failure (errors l ++ errors l') i 0
+
+data ParseError i
+    = Expected
+    | Unexpected i
+    | Unsatisfied (Maybe i)
+    | Unequal i (Maybe i)
+    deriving (Show)
