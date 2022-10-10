@@ -1,11 +1,13 @@
-{-
+{- |
 Module: Data.Parsnip
-Description: A simple monadic parser combinator library.
+Description: Contains core parser types and parser combinator functions.
 Copyright: (c) Indraneel Mahendrakumar, 2022
 License: MIT
 Maintainer: Indraneel Mahendrakumar (indraneel.mahendrakumar@gmail.com)
 Stability: experimental
 Portability: portable
+
+The @Data.Parsnip@ module exposes the core @`Parser`@ type and polymorphic parser combinator functions that work with many kinds of input and output types.
 -}
 module Data.Parsnip (
     Parser (..),
