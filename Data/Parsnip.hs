@@ -1,3 +1,15 @@
+{- |
+Module: Data.Parsnip
+Description: A simple monadic parser combinator library.
+Description: Contains core parser types.
+Copyright: (c) Indraneel Mahendrakumar, 2022
+License: MIT
+Maintainer: Indraneel Mahendrakumar <indraneel.mahendrakumar@gmail.com>
+Stability: experimental
+Portability: portable
+
+The @Data.Parsnip@ module exposes the core parsing types @`Parser`@, @`ParseSuccess`@, @`ParseFailure`@, and @`ParseError`@.
+-}
 module Data.Parsnip (
     ParseError (..),
     ParseFailure (..),
@@ -9,8 +21,11 @@ module Data.Parsnip (
 
 import Control.Applicative (Alternative (..))
 
-newtype Parser e s i o
-    = Parser { parse :: s i -> Either (ParseFailure e s i) (ParseSuccess s i o) }
+-- | @`Parser` e s i o@ is a parser that accepts an input stream of type @s i@, and produces either errors of type @e@ or output of type @o@.
+newtype Parser e s i o = Parser
+    { -- | Parses an input stream of type @s i@ and returns @`Either`@ a @`ParseFailure` e s i@ or a @`ParseSuccess` s i o@.
+      parse :: s i -> Either (ParseFailure e s i) (ParseSuccess s i o)
+    }
 
 instance Functor (Parser e s i) where
     fmap f (Parser p) = Parser (p' . p)
@@ -50,15 +65,36 @@ instance Alternative (Parser e s i) where
                     Right r' -> Right r'
                 Right r -> Right r
 
-data ParseSuccess s i o
-    = Success { output :: o, offset :: Int, remaining :: s i }
+-- | @`ParseSuccess` s i o@ represents a successful parse with output of type @o@ and remaining input stream of type @s i@.
+data ParseSuccess s i o = Success
+    { -- | Parsed output.
+      output :: o,
+      -- | Amount of input that was consumed.
+      offset :: Int,
+      -- | Remaining input to parse.
+      remaining :: s i
+    }
 
+-- | @`success` out ofst@ returns a @`ParseSuccess`@ as a @`Right`@ value.
+success :: o -> Int -> s i -> Either a (ParseSuccess s i o)
 success out ofst rem = Right $ Success out ofst rem
 
-data ParseFailure e s i
-    = Failure { errors :: [ParseError e], input :: s i }
+-- | @`ParseFailure` e s i@ represents a failed parse with a list of errors of type @e@ and invalid input stream of type @s i@.
+data ParseFailure e s i = Failure
+    { -- | List of parse errors.
+      errors :: [ParseError e],
+      -- | Input that caused the parsing to fail.
+      input :: s i
+    }
 
+-- | @`failure` errs inp@ returns a @`ParseFailure`@ as a @`Left`@ value.
+failure :: [ParseError e] -> s i -> Either (ParseFailure e s i) a
 failure errs inp = Left $ Failure errs inp
 
-data ParseError e
-    = Error { cause :: e, at :: Int }
+-- | @`ParseError` e@ represents a parse error at a specified position and with underlying error of type @e@.
+data ParseError e = Error
+    { -- | Underlying cause of error.
+      cause :: e,
+      -- | Position where error occurred.
+      at :: Int
+    }
