@@ -1,6 +1,5 @@
 {- |
 Module: Data.Parsnip.Stream
-Description: A simple monadic parser combinator library.
 Description: Contains the @`TokenStream`@ typeclass and its various instances.
 Copyright: (c) Indraneel Mahendrakumar, 2022
 License: MIT

@@ -1,6 +1,5 @@
 {- |
 Module: Data.Parsnip.Combinators
-Description: A simple monadic parser combinator library.
 Description: Contains common parser combinator functions.
 Copyright: (c) Indraneel Mahendrakumar, 2022
 License: MIT
