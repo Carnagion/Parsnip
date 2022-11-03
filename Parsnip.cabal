@@ -1,0 +1,23 @@
+cabal-version: 2.4
+name: Parsnip
+version: 0.1.0
+
+synopsis: A simple monadic parser combinator library.
+description: A simple monadic parser combinator library.
+
+bug-reports: https://github.com/Carnagion/Parsnip/issues
+
+license: MIT
+author: Indraneel Mahendrakumar
+maintainer: indraneel.mahendrakumar@gmail.com
+copyright: (c) Indraneel mahendrakumar
+
+library
+    build-depends:    base ^>=4.14.3.0
+    default-language: Haskell2010
+
+    exposed-modules:
+        Data.Parsnip
+        Data.Parsnip.Base
+        Data.Parsnip.Combinators
+        Data.Parsnip.Stream
